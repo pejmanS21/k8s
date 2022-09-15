@@ -1,0 +1,45 @@
+# kubernetes-fastapi LoadBalancer Service
+# Enables the pods in a deployment to be accessible from outside the cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastk8s-service
+spec:
+  selector:
+    app: fastk8s
+  ports:
+    - protocol: "TCP"
+      port: 8000
+      targetPort: 8000
+  type: LoadBalancer     #  supported values: "ClusterIP", "ExternalName", "LoadBalancer", "NodePort"
+
+---
+# Deployment
+# Defines the deployment of the app running in a pod on any worker node
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastk8s
+  labels:
+    app: fastk8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastk8s
+  template:
+    metadata:
+      labels:
+        app: fastk8s
+    spec:
+      containers:
+        - name: fastk8s
+          image: pejmans21/fastapi-k8s:0.1.1
+          ports:
+            - containerPort: 8000
+          imagePullPolicy: Always
+          resources:
+            # You must specify requests for CPU to autoscale
+            # based on CPU utilization
+            requests:
+              cpu: "250m"
