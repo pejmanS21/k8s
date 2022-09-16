@@ -5,15 +5,28 @@ pipeline {
         SERVER_CREDENTIALS = credentials('credential_id')   // credential binding plugin
     }
     stages {
-        stage("build") {
+        stage("build-dev") {
             agent { docker 'python:3.9-slim' }
+            when {
+                expression {
+                    BRANCH_NAME == "dev"
+                }
+            }
+            steps {
+                sh 'python3 -V'
+                sh 'python3 test_jenkins.py'
+            }
+        }
+
+        stage("build") {
+            when {
+                expression {
+                    BRANCH_NAME != "dev"
+                }
+            }
             steps {
                 echo 'Build Stage'
                 echo "Building ${VERSION}"
-                if (env.BRANCH_NAME == 'dev') {
-                    sh 'python3 -V'
-                    sh 'python3 test_jenkins.py'
-                }
             }
         }
         
