@@ -14,7 +14,7 @@ pipeline {
         
         stage("test") {
             when {
-                expresssion {
+                expression {
                     BRANCH_NAME == "dev"
                 }
             }
