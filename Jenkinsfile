@@ -6,9 +6,14 @@ pipeline {
     }
     stages {
         stage("build") {
+            agent { docker 'python:3.9-slim' }
             steps {
                 echo 'Build Stage'
                 echo "Building ${VERSION}"
+                if (env.BRANCH_NAME == 'dev') {
+                    sh 'python3 -V'
+                    sh 'python3 test_jenkins.py'
+                }
             }
         }
         
