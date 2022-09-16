@@ -6,7 +6,7 @@ pipeline {
     }
     stages {
         stage("build-dev") {
-            agent { docker 'python:3.9-slim' }
+            agent { docker { image 'python:3.9-slim' } }
             when {
                 expression {
                     BRANCH_NAME == "dev"
